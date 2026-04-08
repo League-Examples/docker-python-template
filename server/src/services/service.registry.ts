@@ -1,0 +1,69 @@
+import type { ServiceSource } from '../contracts/index';
+
+// Import the lazy-init prisma (the actual PrismaClient proxy)
+import { prisma as defaultPrisma } from './prisma';
+
+// Import existing service functions
+import { initConfigCache, getConfig, getAllConfig, setConfig, exportConfig } from './config';
+import { logBuffer } from './logBuffer';
+import { UserService } from './user.service';
+import { PermissionsService } from './permissions.service';
+import { SchedulerService } from './scheduler.service';
+import { BackupService } from './backup.service';
+import { SessionService } from './session.service';
+import { ChannelService } from './channel.service';
+import { MessageService } from './message.service';
+
+export class ServiceRegistry {
+  readonly source: ServiceSource;
+  readonly users: UserService;
+  readonly permissions: PermissionsService;
+  readonly scheduler: SchedulerService;
+  readonly backups: BackupService;
+  readonly sessions: SessionService;
+  readonly channels: ChannelService;
+  readonly messages: MessageService;
+
+  private constructor(source: ServiceSource = 'UI') {
+    this.source = source;
+    this.users = new UserService(defaultPrisma);
+    this.permissions = new PermissionsService(defaultPrisma);
+    this.scheduler = new SchedulerService(defaultPrisma);
+    this.backups = new BackupService(defaultPrisma);
+    this.sessions = new SessionService(defaultPrisma);
+    this.channels = new ChannelService(defaultPrisma);
+    this.messages = new MessageService(defaultPrisma);
+  }
+
+  static create(source?: ServiceSource): ServiceRegistry {
+    return new ServiceRegistry(source);
+  }
+
+  // --- Config ---
+  get config() {
+    return { initCache: initConfigCache, get: getConfig, getAll: getAllConfig, set: setConfig, export: exportConfig };
+  }
+
+  // --- Logs ---
+  get logs() {
+    return logBuffer;
+  }
+
+  // --- Prisma (for direct DB access when needed) ---
+  get prisma() {
+    return defaultPrisma;
+  }
+
+  /**
+   * Delete all business data from the database in FK-safe order.
+   * Preserves system tables (Config, Session).
+   */
+  async clearAll(): Promise<void> {
+    const p = this.prisma;
+    await p.message.deleteMany();
+    await p.channel.deleteMany();
+    await p.scheduledJob.deleteMany();
+    await p.roleAssignmentPattern.deleteMany();
+    await p.user.deleteMany();
+  }
+}

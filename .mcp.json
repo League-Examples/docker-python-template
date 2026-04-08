@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "clasi": {
+      "command": "clasi",
+      "args": [
+        "mcp"
+      ]
+    },
+    "rundbat": {
+      "command": "rundbat",
+      "args": [
+        "mcp"
+      ]
+    },
+    "browsermcp": {
+      "command": "npx",
+      "args": [
+        "@browsermcp/mcp@latest"
+      ]
+    }
+  }
+}
