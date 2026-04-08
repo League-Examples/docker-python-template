@@ -1,9 +1,9 @@
 {
   "name": "Python FastAPI App",
   // Pre-built image from .devcontainer/Dockerfile via .github/workflows/devcontainer-image.yml
+  // "image": "ghcr.io/ericbusboom/docker-python-template/devcontainer:latest",
   // To build locally instead, replace "image" with:
-  //   "build": { "dockerfile": "Dockerfile" },
-  "image": "ghcr.io/ericbusboom/docker-python-template/devcontainer:latest",
+  "build": { "dockerfile": "Dockerfile" },
 
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
@@ -16,6 +16,7 @@
   },
 
   "postCreateCommand": ".devcontainer/post-create.sh",
+
 
   "customizations": {
     "vscode": {
