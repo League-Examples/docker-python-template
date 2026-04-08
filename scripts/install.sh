@@ -145,7 +145,7 @@ fi
 
 if command -v dotconfig &>/dev/null; then
   info "Initializing dotconfig..."
-  dotconfig init 2>/dev/null && success "dotconfig initialized" || warn "dotconfig init failed — run manually"
+  dotconfig init -q 2>/dev/null && success "dotconfig initialized" || warn "dotconfig init failed — run manually"
 fi
 
 if command -v clasi &>/dev/null; then
